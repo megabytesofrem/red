@@ -3,7 +3,9 @@
 
 use pancurses::{Window, Input};
 
+#[derive(PartialEq)]
 pub enum EditorMode {
+    Command,
     Insert,
     Cursor,
 }
@@ -32,6 +34,7 @@ impl Editor {
     /// if it doesn't allow editing.
     pub fn can_edit(&self) -> bool {
         match &self.curr_mode {
+            EditorMode::Command => true, // true, but not to text buffer
             EditorMode::Insert => true,
             EditorMode::Cursor => false
         }
@@ -53,11 +56,24 @@ impl Editor {
         &self.content_window
     }
 
-    /// Getter for the current editor mode. Can be one of the following
+    /// Gets the current editor mode. Can be one of the following
     /// 
+    /// - `EditorMode::Command`- Editor is in command mode, text is interpreted as commands
     /// - `EditorMode::Insert` - Editor is insert mode, text can be inserted
     /// - `EditorMode::Cursor` - Editor is in cursor mode, arrow-keys navigation
+    /// 
+    /// In command mode, although editing is allowed any text that is inputted is not sent to
+    /// the text buffer and is instead treated as a command and handled as such. 
     pub fn get_curr_mode(&self) -> &EditorMode {
         &self.curr_mode
+    }
+
+    /// Sets the current editor mode. Can be one of the following
+    /// 
+    /// - `EditorMode::Command`- Editor is in command mode, text is interpreted as commands
+    /// - `EditorMode::Insert` - Editor is insert mode, text can be inserted
+    /// - `EditorMode::Cursor` - Editor is in cursor mode, arrow-keys navigation
+    pub fn set_curr_mode(&mut self, mode: EditorMode) {
+        self.curr_mode = mode;
     }
 }
