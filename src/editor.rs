@@ -1,7 +1,6 @@
 // red editor
 // Copyright (c) animojis 2019-forever
 
-extern crate pancurses;
 use pancurses::{Window, Input};
 
 pub enum EditorMode {
@@ -11,6 +10,7 @@ pub enum EditorMode {
 
 pub struct Editor {
     window: Window,
+    content_window: Window,  
     curr_mode: EditorMode
 }
 
@@ -19,10 +19,11 @@ impl Editor {
     /// Creates a new Editor
     ///
     /// ## Arguments
-    /// - `window` - A pancurses window to use
+    /// - `window` - The main window to use
+    /// - `content_window` - The content sub-window to use
     ///
-    pub fn new(window: Window) -> Editor {
-        Editor { window: window, curr_mode: EditorMode::Insert }
+    pub fn new(window: Window, content_window: Window) -> Editor {
+        Editor { window: window, content_window: content_window, curr_mode: EditorMode::Insert }
     }
 
     /// Checks if the current mode allows editing or not
@@ -36,9 +37,20 @@ impl Editor {
         }
     }
 
-    /// Getter for the `pancurses` window
+    /// Gets the main window associated with the editor
+    /// 
+    /// This is not the content window, and cannot be scrolled.
     pub fn get_window(&self) -> &Window {
         &self.window
+    }
+
+    /// Gets the content window associated with the editor
+    /// 
+    /// Unlike the main window (which can be got using `get_window`),
+    /// the content window supports scrolling when the content is larger
+    /// than itself.
+    pub fn get_content_window(&self) -> &Window {
+        &self.content_window
     }
 
     /// Getter for the current editor mode. Can be one of the following
