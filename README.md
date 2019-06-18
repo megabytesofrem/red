@@ -1,4 +1,4 @@
-# red editor
+# red
 Rust text editor using ncurses (pancurses crate).
 
 ## Planned Features
