@@ -16,6 +16,7 @@ fn main() {
         .expect("Error creating scroll_window");
 
     content_window.keypad(true);
+    content_window.nodelay(true);
     content_window.scrollok(true);
     content_window.setscrreg(0, size.0);
 
@@ -25,9 +26,7 @@ fn main() {
     pancurses::noecho();
 
     'main: loop {
-        let content_win = editor.get_content_window();
-
-        match content_win.getch() {
+        match editor.get_content_win().getch() {
             Some(Input::Character('\u{1b}')) => {
                 // Exit to command mode
                 match editor.get_curr_mode() {
@@ -37,27 +36,55 @@ fn main() {
                     // Set the current mode to the command mode when we hit ESC
                     _ => {
                         editor.set_curr_mode(EditorMode::Command);
+
+                        let max_y = editor.get_content_win().get_max_y();
+                        editor.get_content_win().mvaddstr(max_y - 1, 0, ":");
+                        editor.get_content_win().refresh();
                     }
                 };
             }
             Some(Input::KeyBackspace) => {
                 // Move to previous char and delete it
-                content_win.mv(content_win.get_cur_y(), content_win.get_cur_x() - 1);
-                content_win.delch();
-                content_win.refresh();
+                let x = editor.get_content_win().get_cur_x();
+                let y = editor.get_content_win().get_cur_y();
+
+                editor.get_content_win().mv(y, x - 1);
+                editor.get_content_win().delch();
+                editor.get_content_win().refresh();
             }
             Some(Input::KeyUp) => {
                 // Scroll the content window up
-                content_win.mvwin(content_win.get_cur_y() - 1, content_win.get_cur_x());
-                content_win.mv(0, 0);
-                content_win.refresh();
+                let x = editor.get_content_win().get_cur_x();
+                let y = editor.get_content_win().get_cur_y();
+
+                editor.get_content_win().mvwin(y - 1, x);
+                editor.get_content_win().mv(y - 1, 0);
+                editor.get_content_win().refresh();
             }
             Some(Input::Character(c)) => {
 
-                if (editor.is_command_mode()) {
-                    // We are now in command mode
+                if editor.is_command_mode() {
+                    let x = editor.get_content_win().get_cur_x();
+                    let y = editor.get_content_win().get_cur_y();
+
+                    // Now in command mode, do not append to the text buffer
+                    let mut buf = editor.get_command_buf();
+                    buf.push_str(&format!("{}", c).to_owned());
+
+                    // Offset the first character to be after the prompt
+                    let max_y = editor.get_content_win().get_max_y();
+                    editor
+                        .get_content_win()
+                        .mvaddch(max_y - 1, if x != 0 { x } else { x + 1 }, c);
+
+                    editor.get_content_win().refresh();
+                } else {
+                    // Append to the text buffer
+                    let mut buf = editor.get_text_buf();
+                    buf.push_str(&format!("{}", c).to_owned());
+
+                    editor.get_content_win().addch(c);
                 }
-                content_win.addch(c);
             }
             Some(_) => (),
             None => (),

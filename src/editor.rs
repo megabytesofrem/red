@@ -11,24 +11,29 @@ pub enum EditorMode {
 }
 
 pub struct Editor {
-    window: Window,
-    content_window: Window,
+    win: Window,
+    content_win: Window,
     curr_mode: EditorMode,
+
+    text_buf: String,
+    command_buf: String,
 }
 
 impl Editor {
 
     /// Creates a new Editor
     ///
-    /// ## Arguments
+    /// # Arguments
     /// - `window` - The main window to use
-    /// - `content_window` - The content sub-window to use
+    /// - `content_win` - The content sub-window to use
     ///
-    pub fn new(window: Window, content_window: Window) -> Editor {
+    pub fn new(window: Window, content_win: Window) -> Editor {
         Editor {
-            window: window,
-            content_window: content_window,
+            win: window,
+            content_win: content_win,
             curr_mode: EditorMode::Insert,
+            text_buf: "".to_owned(),
+            command_buf: "".to_owned(),
         }
     }
 
@@ -52,17 +57,17 @@ impl Editor {
     /// Gets the main window associated with the editor
     ///
     /// This is not the content window, and cannot be scrolled.
-    pub fn get_window(&self) -> &Window {
-        &self.window
+    pub fn get_win(&self) -> &Window {
+        &self.win
     }
 
     /// Gets the content window associated with the editor
     ///
-    /// Unlike the main window (which can be got using `get_window`),
+    /// Unlike the main window (which can be got using `get_win`),
     /// the content window supports scrolling when the content is larger
     /// than itself.
-    pub fn get_content_window(&self) -> &Window {
-        &self.content_window
+    pub fn get_content_win(&self) -> &Window {
+        &self.content_win
     }
 
     /// Gets the current editor mode. Can be one of the following
@@ -84,5 +89,21 @@ impl Editor {
     /// - `EditorMode::Cursor` - Editor is in cursor mode, arrow-keys navigation
     pub fn set_curr_mode(&mut self, mode: EditorMode) {
         self.curr_mode = mode;
+    }
+
+    /// Gets the contents of the text buffer
+    ///
+    /// This buffer is used for text content in the file, and is seperate
+    /// than the command buffer.
+    pub fn get_text_buf(&mut self) -> &mut String {
+        &mut self.text_buf
+    }
+
+    /// Gets the contents of the command buffer
+    ///
+    /// This buffer is seperate from the text buffer (see `get_text_buf`) and
+    /// is only used internally for storing commands to process when in command mode.
+    pub fn get_command_buf(&mut self) -> &mut String {
+        &mut self.command_buf
     }
 }
