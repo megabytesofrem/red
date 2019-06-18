@@ -43,7 +43,10 @@ fn main() {
                     }
                 };
             }
-            Some(Input::KeyBackspace) => {
+            Some(Input::KeyBackspace) | Some(Input::Character('\u{7f}')) => {
+                // Fix for macOS, since backspace emits 7f instead of the normal
+                // key code.
+
                 // Move to previous char and delete it
                 let x = editor.get_content_win().get_cur_x();
                 let y = editor.get_content_win().get_cur_y();

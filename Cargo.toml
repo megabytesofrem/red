@@ -6,3 +6,4 @@ edition = "2018"
 
 [dependencies]
 pancurses = "0.16.1"
+os_info = "1.1.1"
