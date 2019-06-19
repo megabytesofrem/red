@@ -5,28 +5,28 @@ Before you consider contributing to the project, please take the time to familia
 **Do**
 ```rust
 // Good, only explicitly define the type when needed
-let numbers: Vec<i32> = Vec::new()
+let numbers: Vec<i32> = Vec::new();
 
-let name = "Tom" // Good, no need to mutate this
-let mut score = 0 // Good, score needs to mutate 
+let name = "Tom"; // Good, no need to mutate this
+let mut score = 0; // Good, score needs to mutate 
 
-let has_pets = true // Good, use snake_case
+let has_pets = true; // Good, use snake_case
 
 // Constants
-const PI = 3.14 // Good, only use uppercase for constants
-const TWO_PI = PI * 2 // Good, use SHOUTING_SNAKE_CASE
+const PI = 3.14; // Good, only use uppercase for constants
+const TWO_PI = PI * 2; // Good, use SHOUTING_SNAKE_CASE
 ```
 
 **Don't**
 ```rust
-let mut name = "Tom" // No need to mutate this
-let mut score: i32 = 0 // Bad, no need to define type
+let mut name = "Tom"; // No need to mutate this
+let mut score: i32 = 0; // Bad, no need to define type
 
-let haspets = true // Bad, confusing to read
-let hasPets = true // Bad, using camelCase for the names
-let HasPets = true // Bad, using TitleCase for the names
+let haspets = true; // Bad, confusing to read
+let hasPets = true; // Bad, using camelCase for the names
+let HasPets = true; // Bad, using TitleCase for the names
 
-let PI = 3.14 // Bad, constants should explicitly be const
+let PI = 3.14; // Bad, constants should explicitly be const
 ```
 
 ## Structs
